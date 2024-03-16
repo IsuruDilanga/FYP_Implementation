@@ -1,0 +1,150 @@
+.navbar {
+    height: 80px;
+    background-color: rgb(119, 185, 255);
+}
+
+.heading {
+    margin-top: 150px;
+    padding-left: 50px;
+}
+
+.title p {
+    font-size: 80px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.sub-title {
+    font-size: 24px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Home.css */
+
+.video-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+}
+
+.video {
+    position: relative;
+    /* top: 0;
+    left: 0; */
+    margin-top: 100px;
+    width: 100%;
+    height: 100%;
+}
+
+.btn-camera {
+    position: relative;
+    margin-top: 130px;
+    padding: 150px;
+    cursor: pointer;
+    /* margin-top: 400px; */
+    /* bottom: 10px;
+    left: 10px; */
+    z-index: 1;
+}
+
+.btn-capture {
+    position: relative;
+    width: 48%;
+    cursor: pointer;
+    /* bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%); */
+    z-index: 1;
+}
+
+.btn-close {
+    position: relative;
+    width: 48%;
+    cursor: pointer;
+    border: 1px solid black;
+    /* bottom: 10px;
+    right: 10px; */
+    z-index: 1;
+}
+
+.btn-restart {
+    position: relative;
+    width: 48%;
+    cursor: pointer;
+    border: 1px solid black;
+    /* bottom: 10px;
+    right: 10px; */
+    z-index: 1;
+}
+
+.btn-upload {
+    position: relative;
+    margin-top: 20px;
+    width: 100%;
+    padding: 7px 0;
+    cursor: pointer;
+    /* transform: translateX(-50%); */
+    z-index: 1;
+}
+
+
+/* .imagesection {
+    position: relative;
+    width: 400px;
+    height: 400px;
+} */
+
+/* .imagesection video {
+    position: 'absolute';
+    top: 0;
+    left: 0;
+    width: '100%';
+    height: '100%',
+}
+
+.opencamera {
+    position: 'absolute';
+    bottom: '10px';
+    left: '20px';
+    z-index: 1;
+} */
+
+
+/* 
+.imageSection {
+    position: relative;
+    width: 400px;
+    height: 400px;
+}
+
+.imageSection video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.imageSection button {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1;
+}
+
+.imageSection button:nth-child(2) {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.imageSection button:last-child {
+    right: 10px;
+}
+
+.imageSection input[type="file"] {
+    display: none;
+} */
