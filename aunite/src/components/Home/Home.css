@@ -60,11 +60,11 @@
     z-index: 1;
 }
 
-.btn-close {
+.btn-danger {
     position: relative;
     width: 48%;
     cursor: pointer;
-    border: 1px solid black;
+    margin-left: 10px;
     /* bottom: 10px;
     right: 10px; */
     z-index: 1;
@@ -88,6 +88,18 @@
     cursor: pointer;
     /* transform: translateX(-50%); */
     z-index: 1;
+}
+
+.btn-back {
+    margin-top: 20px;
+    width: 100%;
+    padding: 7px 0;
+}
+
+.uploaded-image {
+    margin-top: 80px;
+    width: 400px;
+    height: 400px;
 }
 
 
