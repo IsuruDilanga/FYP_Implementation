@@ -5,6 +5,8 @@ import os
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from uuid import uuid4
+from VGG16_ASD_Prediction import predict_asd_vgg16;
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -24,6 +26,22 @@ async def root():
 @app.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
+
+@app.get("/predictASD")
+async def predict_asd(filepath: str):
+    try:
+        print(f"Filepath: {filepath}")
+        input_file_path = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/src/CaptureImages/' + filepath
+        result = predict_asd_vgg16(input_file_path)
+        print(f"Result: {result}")
+        rounded_result = round(result, 2)
+        if rounded_result > 0.5:
+            return JSONResponse(content={"message": "Prediction successful", "prediction": float(rounded_result), "isASD": True})
+        else:
+            return JSONResponse(content={"message": "Prediction successful", "prediction": float(1-rounded_result), "isASD": False})
+        # return JSONResponse(content={"message": "Prediction successful", "prediction": float(round(rounded_result, 2))})
+    except Exception as e:
+        return JSONResponse(content={"error": f"Failed to predict ASD: {str(e)}"})
 
 @app.post("/save_image")
 async def save_image(image: UploadFile = File(...)):
