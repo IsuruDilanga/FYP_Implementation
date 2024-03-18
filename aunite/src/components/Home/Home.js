@@ -5,6 +5,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./Home.css";
 import { Link } from "react-router-dom";
+import LoadingOverlay from "../LoadingOverlay/LoadingOverlay";
 
 const HomePage = () => {
 
@@ -17,6 +18,8 @@ const HomePage = () => {
     const fileInputRef = useRef(null);
     const [showUploadButton, setShowUploadButton] = useState(true);
     const [imagePath, setImagePath] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [selectedModel, setSelectedModel] = useState("");
 
     let responseData;
 
@@ -146,7 +149,8 @@ const HomePage = () => {
     };
 
     const predictASDchild = async () => {
-        console.log("hello ", imagePath);;
+        setLoading(true); // Set loading state to true when starting the API request
+        console.log("Selected Model:", selectedModel);
         try {
             const response = await fetch(`http://localhost:8000/predictASD?filepath=${imagePath}`);
             if (response.ok) {
@@ -160,6 +164,8 @@ const HomePage = () => {
         } catch (error) {
             console.error('Failed to predict ASD:', error);
             // Handle error
+        } finally {
+            setLoading(false); // Set loading state to false when request completes (whether successful or not)
         }
     }
 
@@ -175,8 +181,9 @@ const HomePage = () => {
                 </div>
             </nav>
             <div className="container">
+                {loading && <LoadingOverlay />}
                 <div className="row">
-                    <div className="col-lg-8" style={{ backgroundColor: 'red' }}>
+                    <div className="col-lg-8" >
                         <div className="heading">
                             <div className="title">
                                 <p>Empowering <br></br> Understanding</p>
@@ -188,6 +195,12 @@ const HomePage = () => {
                     </div>
                     <div className="col-lg-4">
                         <div className="video-container">
+                            {/* {loading && (
+                                <div className="loading-container">
+                                    <div className="loading-animation"></div>
+                                    <div>Loading...</div>
+                                </div>
+                            )} */}
                             <video ref={videoRef} autoPlay muted className="video" style={{ display: mediaStream ? 'block' : 'none' }} />
                             {showUploadedImage && (
                                 <div>
@@ -224,8 +237,19 @@ const HomePage = () => {
                                 </div>
                             )}
                             {(showUploadedImage || capturedImage) && (
-                                <div>
-                                    <button onClick={predictASDchild} className="btn btn-primary btn-upload">Check ASD</button>
+                                <div className="row">
+                                    <div className="col-sm-8">
+                                        <button onClick={predictASDchild} className="btn btn-primary btn-ASD">Check ASD</button>
+                                    </div>
+                                    <div className="col-sm-4">
+                                        <select onChange={(e) => setSelectedModel(e.target.value)} className="form-select model-list">
+                                            <option value="VGG16">VGG16</option>
+                                            <option value="VGG19">VGG19</option>
+                                            <option value="ResNet50">ResNet50</option>
+                                            <option value="ResNet50V2">ResNet50V2</option>
+                                            <option value="InceptionV3">InceptionV3</option>
+                                        </select>
+                                    </div>
                                 </div>
                             )}
                         </div>

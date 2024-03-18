@@ -90,6 +90,26 @@
     z-index: 1;
 }
 
+.btn-ASD {
+    position: relative;
+    margin-top: 20px;
+    width: 100%;
+    padding: 7px 0;
+    cursor: pointer;
+    /* transform: translateX(-50%); */
+    z-index: 1;
+}
+
+.model-list {
+    position: relative;
+    margin-top: 20px;
+    width: 100%;
+    padding: 7px 2px;
+    cursor: pointer;
+    /* transform: translateX(-50%); */
+    z-index: 1;
+}
+
 .btn-back {
     margin-top: 20px;
     width: 100%;
@@ -102,61 +122,21 @@
     height: 400px;
 }
 
-
-/* .imagesection {
-    position: relative;
-    width: 400px;
-    height: 400px;
-} */
-
-/* .imagesection video {
-    position: 'absolute';
-    top: 0;
-    left: 0;
-    width: '100%';
-    height: '100%',
+.blur {
+    filter: blur(5px);
+    /* Adjust the blur effect as needed */
 }
 
-.opencamera {
-    position: 'absolute';
-    bottom: '10px';
-    left: '20px';
-    z-index: 1;
-} */
-
-
-/* 
-.imageSection {
-    position: relative;
-    width: 400px;
-    height: 400px;
+.loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.imageSection video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-}
 
-.imageSection button {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    z-index: 1;
-}
 
-.imageSection button:nth-child(2) {
-    left: 50%;
-    transform: translateX(-50%);
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
-
-.imageSection button:last-child {
-    right: 10px;
-}
-
-.imageSection input[type="file"] {
-    display: none;
-} */
