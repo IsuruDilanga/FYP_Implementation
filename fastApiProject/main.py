@@ -5,8 +5,13 @@ import os
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from uuid import uuid4
-from VGG16_ASD_Prediction import predict_asd_vgg16;
+from ASD_Prediction import predict_asd_vgg16
+from ASD_Prediction import predict_asd_vgg19
+from ASD_Prediction import predict_asd_ResNet50
+from ASD_Prediction import predict_asd_ResNet50V2
+from ASD_Prediction import predict_asd_InceptionV3
 from fastapi.responses import JSONResponse
+from typing import Optional
 
 app = FastAPI()
 
@@ -28,11 +33,25 @@ async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
 @app.get("/predictASD")
-async def predict_asd(filepath: str):
+async def predict_asd(filepath: str, selected_model: Optional[str] = None):
     try:
         print(f"Filepath: {filepath}")
+        print(f"Selected Model: {selected_model}")
+
         input_file_path = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/src/CaptureImages/' + filepath
-        result = predict_asd_vgg16(input_file_path)
+
+        if selected_model == "VGG16":
+            result = predict_asd_vgg16(input_file_path)
+        elif selected_model == "VGG19":
+            result = predict_asd_vgg19(input_file_path)
+        elif selected_model == "ResNet50":
+            result = predict_asd_ResNet50(input_file_path)
+        elif selected_model == "ResNet50V2":
+            result = predict_asd_ResNet50V2(input_file_path)
+        elif selected_model == "InceptionV3":
+            result = predict_asd_InceptionV3(input_file_path)
+
+
         print(f"Result: {result}")
         rounded_result = round(result, 2)
         if rounded_result > 0.5:
