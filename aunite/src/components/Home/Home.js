@@ -6,6 +6,8 @@ import React, { useEffect, useState, useRef } from "react";
 import "./Home.css";
 import { Link } from "react-router-dom";
 import LoadingOverlay from "../LoadingOverlay/LoadingOverlay";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HomePage = () => {
 
@@ -84,6 +86,7 @@ const HomePage = () => {
 
                 if (response.ok) {
                     responseData = await response.json();
+                    toast.success('Capture Image Sucessfully!', { autoClose: 1500 });
                     setCapturedImage(responseData.filename);
                     console.log('Image saved successfully. Filename:', responseData.filename);
                 } else {
@@ -128,6 +131,7 @@ const HomePage = () => {
                 responseData = await response.json();
                 console.log('Image saved successfully. Filename:', responseData.filename);
 
+                toast.success('Image Uploaded Sucessfully!', { autoClose: 1500 });
                 setImagePath(responseData.filename);
 
                 setUploadedImage(URL.createObjectURL(file));
@@ -149,24 +153,32 @@ const HomePage = () => {
     };
 
     const predictASDchild = async () => {
-        setLoading(true); // Set loading state to true when starting the API request
+
         console.log("Selected Model:", selectedModel);
-        try {
-            const response = await fetch(`http://localhost:8000/predictASD?filepath=${imagePath}`);
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Prediction successful:', data);
-                // Handle response data
-            } else {
-                console.error('Failed to predict ASD:', response.statusText);
-                // Handle error
-            }
-        } catch (error) {
-            console.error('Failed to predict ASD:', error);
-            // Handle error
-        } finally {
-            setLoading(false); // Set loading state to false when request completes (whether successful or not)
+        if (selectedModel === '') {
+            toast.error("Please select a model!", { autoClose: 1500 });
         }
+        else {
+            toast.success('Image Send to Check ASD!', { autoClose: 1500 });
+            setLoading(true); // Set loading state to true when starting the API request
+            try {
+                const response = await fetch(`http://localhost:8000/predictASD?filepath=${imagePath}&selected_model=${selectedModel}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Prediction successful:', data);
+                    // Handle response data
+                } else {
+                    console.error('Failed to predict ASD:', response.statusText);
+                    // Handle error
+                }
+            } catch (error) {
+                console.error('Failed to predict ASD:', error);
+                // Handle error
+            } finally {
+                setLoading(false); // Set loading state to false when request completes (whether successful or not)
+            }
+        }
+
     }
 
     return (
@@ -243,6 +255,7 @@ const HomePage = () => {
                                     </div>
                                     <div className="col-sm-4">
                                         <select onChange={(e) => setSelectedModel(e.target.value)} className="form-select model-list">
+                                            <option value="">Model</option>
                                             <option value="VGG16">VGG16</option>
                                             <option value="VGG19">VGG19</option>
                                             <option value="ResNet50">ResNet50</option>
@@ -252,6 +265,8 @@ const HomePage = () => {
                                     </div>
                                 </div>
                             )}
+                            {/* ToastContainer to display notification messages */}
+                            <ToastContainer />
                         </div>
                     </div>
                 </div>
