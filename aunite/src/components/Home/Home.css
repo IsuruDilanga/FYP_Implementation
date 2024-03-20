@@ -112,12 +112,14 @@
 
 .btn-back {
     margin-top: 20px;
+    cursor: pointer;
     width: 100%;
     padding: 7px 0;
 }
 
 .uploaded-image {
     margin-top: 80px;
+    cursor: pointer;
     width: 400px;
     height: 400px;
 }

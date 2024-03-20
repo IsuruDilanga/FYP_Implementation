@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import LoadingOverlay from "../LoadingOverlay/LoadingOverlay";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ASD_Prediction from "../ASD_Prediction/ASD_Prediction";
 
 const HomePage = () => {
 
@@ -22,6 +23,7 @@ const HomePage = () => {
     const [imagePath, setImagePath] = useState(null);
     const [loading, setLoading] = useState(false);
     const [selectedModel, setSelectedModel] = useState("");
+    const [predictionData, setPredictionData] = useState(null);
 
     let responseData;
 
@@ -88,6 +90,7 @@ const HomePage = () => {
                     responseData = await response.json();
                     toast.success('Capture Image Sucessfully!', { autoClose: 1500 });
                     setCapturedImage(responseData.filename);
+                    setImagePath(responseData.filename);
                     console.log('Image saved successfully. Filename:', responseData.filename);
                 } else {
                     alert('Failed to save image.');
@@ -166,7 +169,8 @@ const HomePage = () => {
                 if (response.ok) {
                     const data = await response.json();
                     console.log('Prediction successful:', data);
-                    // Handle response data
+                    setPredictionData(data);
+                    window.location.href = `/asdprediction?predictionData=${encodeURIComponent(JSON.stringify(data))}&imagePath=${encodeURIComponent(imagePath)}&model=${encodeURIComponent(selectedModel)}`;                    // Handle response data
                 } else {
                     console.error('Failed to predict ASD:', response.statusText);
                     // Handle error
@@ -185,7 +189,7 @@ const HomePage = () => {
         <div>
             <nav className="navbar">
                 <div className="container">
-                    <a className="navbar-brand">Navbar</a>
+                    <a className="navbar-brand">Aunite</a>
                     <form className="d-flex" role="search">
                         <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
                         <button className="btn btn-outline-success" type="submit">Search</button>
@@ -265,6 +269,9 @@ const HomePage = () => {
                                     </div>
                                 </div>
                             )}
+                            {/* <div>
+                                {predictionData !== null && <ASD_Prediction predictionData={predictionData} />}
+                            </div> */}
                             {/* ToastContainer to display notification messages */}
                             <ToastContainer />
                         </div>
