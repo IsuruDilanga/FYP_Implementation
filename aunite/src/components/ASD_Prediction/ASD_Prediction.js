@@ -12,7 +12,7 @@ const ASD_Prediction = () => {
     const [loading, setLoading] = useState(false);
     const [isASD, setASD] = useState(null);
     const [accuracy, setAccuracy] = useState(null);
-    const [limeImagePath, setLimeImagePath] = useState(null);
+    const [xaiImagePath, setxaiImagePath] = useState(null);
 
     useEffect(() => {
         // Retrieve prediction data from URL parameters
@@ -49,8 +49,10 @@ const ASD_Prediction = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log("lime image:", await data.xai_lime_path);
-                setLimeImagePath(await data.xai_lime_path);
-                toast.success('XAI LIME interpretable explanation successful!', { autoClose: 1500 });
+                setxaiImagePath(await data.xai_lime_path);
+                if(await data.xai_lime_path != null){
+                    toast.success('XAI LIME interpretable explanation successful!', { autoClose: 1500 });
+                }
             }
 
         } catch (error) {
@@ -62,18 +64,21 @@ const ASD_Prediction = () => {
 
     const gradCamCheck = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/xai-lime?filepath=${imagePath}&model=${model}`);
+            const response = await fetch(`http://localhost:8000/xai-gradcam?filepath=${imagePath}&selected_model=${model}`);
             if (response.ok) {
                 const data = await response.json();
                 console.log(await data);
-            }
+                setxaiImagePath(await data.xai_gradCAM_path);
+                if(await data.xai_gradCAM_path != null){
+                    toast.success('XAI GradCam interpretable explanation successful!', { autoClose: 1500 });
+                }            }
         } catch (error) {
             console.error("Error: " + error);
         }
     }
 
     const backButton = () => {
-        setLimeImagePath(null);
+        setxaiImagePath(null);
     }
 
     return (
@@ -103,12 +108,12 @@ const ASD_Prediction = () => {
                     </div>
                     <div className="col-lg-4">
                         <div>
-                            {limeImagePath ? (
+                            {xaiImagePath ? (
                                 <>
                                 
-                                <img className='xai-image' src={limeImagePath} alt="LIME Image" />
+                                <img className='xai-image' src={xaiImagePath} alt="LIME Image" />
                                 <div className="sub-title">
-                                    <p style={{fontSize:'20px', marginTop:'10px'}}>Lime Interpretable explanation</p>
+                                    <p style={{fontSize:'20px', marginTop:'10px'}}>Interpretable explanation</p>
                                 </div>
                                 <button onClick={backButton} className="btn btn-info btn-back">Back</button>
 
