@@ -10,6 +10,13 @@ from ASD_Prediction import predict_asd_vgg19
 from ASD_Prediction import predict_asd_ResNet50
 from ASD_Prediction import predict_asd_ResNet50V2
 from ASD_Prediction import predict_asd_InceptionV3
+from ASD_Prediction import request_Lime_vgg16
+from ASD_Prediction import request_Lime_vgg19
+from ASD_Prediction import request_Lime_ResNet50
+from ASD_Prediction import request_Lime_ResNet50V2
+from ASD_Prediction import request_Lime_InceptionV3
+from ASD_Prediction import *
+
 from fastapi.responses import JSONResponse
 from typing import Optional
 
@@ -23,22 +30,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+image_path = "aaaa"
 
 @app.get("/predictASD")
 async def predict_asd(filepath: str, selected_model: Optional[str] = None):
+
+    global image_path
+
     try:
         print(f"Filepath: {filepath}")
         print(f"Selected Model: {selected_model}")
 
         input_file_path = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/src/CaptureImages/' + filepath
+        image_path = input_file_path
 
         if selected_model == "VGG16":
             result = predict_asd_vgg16(input_file_path)
@@ -61,6 +65,47 @@ async def predict_asd(filepath: str, selected_model: Optional[str] = None):
         # return JSONResponse(content={"message": "Prediction successful", "prediction": float(round(rounded_result, 2))})
     except Exception as e:
         return JSONResponse(content={"error": f"Failed to predict ASD: {str(e)}"})
+
+
+@app.get("/xai-lime")
+async def explain_lime(filepath: str, selected_model: Optional[str] = None):
+
+    try:
+        print(f"Filepath: {filepath}")
+        print(f"Selected Model: {selected_model}")
+        input_file_path = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/src/CaptureImages/' + filepath
+        image_path = input_file_path
+        print(f"Image Path: {image_path}")
+
+        if selected_model == "VGG16":
+            print("VGG16")
+            xai_lime_path = request_Lime_vgg16(image_path)
+        elif selected_model == "VGG19":
+            print("VGG19")
+            xai_lime_path = request_Lime_vgg19(image_path)
+        elif selected_model == "ResNet50":
+            print("ResNet50")
+            xai_lime_path = request_Lime_ResNet50(image_path)
+        elif selected_model == "ResNet50V2":
+            print("ResNet50V2")
+            xai_lime_path = request_Lime_ResNet50V2(image_path)
+        elif selected_model == "InceptionV3":
+            print("InceptionV3")
+            xai_lime_path = request_Lime_InceptionV3(image_path)
+
+        print(f"XAI LIME Path: {xai_lime_path}")
+        return JSONResponse(content={"message": "LIME explanation successful", "xai_lime_path": xai_lime_path})
+    except Exception as e:
+        return JSONResponse(content={"error": f"Failed to explain LIME: {str(e)}"})
+
+    # print(f"Filepath: {filepath}")
+    # xai_lime_path = request_Lime_vgg16(input_file_path);
+    # global image_path
+    # print(f"Image Path: {image_path}")
+    #
+    # return JSONResponse(content={"message": "LIME explanation successful", "xai_lime_path": xai_lime_path, "image_path": image_path})
+    # return {"message": "LIME explanation successful"}
+
 
 @app.post("/save_image")
 async def save_image(image: UploadFile = File(...)):
