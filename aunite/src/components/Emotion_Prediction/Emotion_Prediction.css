@@ -4,7 +4,8 @@
 }
 
 .btn-xai-lime {
-    margin-top: 200px;
+    margin-top: 190px;
+    margin-right: 100px;
     width: 100%;
     padding: 20px;
     cursor: pointer;
@@ -12,6 +13,7 @@
 
 .btn-xai-gradcam {
     margin-top: 10px;
+    margin-right: 10px;
     width: 100%;
     padding: 20px;
     cursor: pointer;
@@ -40,10 +42,18 @@
     font-size: 25px;
 }
 
-.btn-emotion {
-    width: 50%;
-    margin-top: 10px;
-    padding: 13px;
-    cursor: pointer;
-    font-weight: 900;
+.title p {
+    font-size: 80px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    margin-left: 100px;
+}
+
+.sub-title p {
+    margin-left: 100px;
+}
+
+.xai-buttons button {
+    margin-right: 100px;
 }
