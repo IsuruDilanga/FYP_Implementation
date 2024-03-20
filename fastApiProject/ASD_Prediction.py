@@ -73,10 +73,14 @@ def predict_asd_vgg16(image_path):
 
     img = np.array(Image.open(image_path).resize(target_size))
     vgg16GradCam_img_original = img.copy()
+
+    img1 = cv2.resize(img, target_size)  # Resize the image to (224, 224)
+    vgg16GradCam_img_for_model = preprocess_input(np.expand_dims(image.img_to_array(img1), axis=0))
+
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR
     img = np.expand_dims(img, axis=0)  # Add a batch dimension
     img = preprocess_input(img)  # Preprocess the image
-    vgg16GradCam_img_for_model = preprocess_input(np.expand_dims(image.img_to_array(img), axis=0))
+    # vgg16GradCam_img_for_model = preprocess_input(np.expand_dims(image.img_to_array(img), axis=0))
 
     img_scaled_vgg16 = img / 255.0
 
@@ -119,8 +123,12 @@ def request_GradCam_vgg16():
 
     unique_filename = str(uuid4()) + '.jpg'
     output_image_path = os.path.join(save_folder, unique_filename)
-    output_image = Image.fromarray(superimposed_img)
-    output_image.save(output_image_path)
+
+    cv2.imwrite(output_image_path, superimposed_img)
+    print(f"Grad-CAM output saved at: {output_image_path}")
+
+    # output_image = Image.fromarray(superimposed_img)
+    # output_image.save(output_image_path)
 
     returnOutput = './ASD_Prediction/GradCAM/GradCAM_VGG16/' + unique_filename
 
@@ -174,11 +182,16 @@ def request_Lime_vgg16(image_path):
 
 vgg19Model_predict = None
 img_scaled_vgg19 = None
+vgg19GradCam_img_original = None
+vgg19GradCam_img_for_model = None
+vgg19GradCam_model = None
 target_size_vgg19 = (244, 244)
-
 def predict_asd_vgg19(image_path):
     global vgg19Model_predict
     global img_scaled_vgg19
+    global vgg19GradCam_img_original
+    global vgg19GradCam_img_for_model
+    global vgg19GradCam_model
     model_path = '/Users/isurudissanayake/Documents/Data/DATA_SET/Feature-Extraction/VGG19/VGG19Model.h5'
     target_size = (224, 224)
 
@@ -191,9 +204,14 @@ def predict_asd_vgg19(image_path):
     predictions = Dense(1, activation='sigmoid')(x)
 
     model = Model(inputs=base_model.input, outputs=predictions)
+    vgg19GradCam_model = model
 
     img = cv2.imread(image_path)
+    vgg19GradCam_img_original = img.copy()
+
     img = cv2.resize(img, target_size)  # Resize the image to (224, 224)
+    vgg19GradCam_img_for_model = preprocess_input(np.expand_dims(image.img_to_array(img), axis=0))
+
     # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # Convert BGR to RGB
     img = np.expand_dims(img, axis=0)  # Add a batch dimension
     img = preprocess_input(img)  # Preprocess the image
@@ -213,6 +231,42 @@ def predict_asd_vgg19(image_path):
     else:
         print(f"Predicted non-ASD with probability: {1 - rounded_prediction:.2f}")
         return rounded_prediction
+
+
+def request_GradCam_vgg19():
+    print("request_GradCam_vgg19")
+    global vgg19GradCam_img_original
+    global vgg19GradCam_img_for_model
+    global vgg19GradCam_model
+
+    # Generate class activation heatmap
+    heatmap = generate_grad_cam(vgg19GradCam_model, vgg19GradCam_img_for_model, 'block5_conv3')
+
+    # Resize the heatmap to match the original image
+    heatmap = cv2.resize(heatmap, (vgg19GradCam_img_original.shape[1], vgg19GradCam_img_original.shape[0]))
+
+    # Convert the heatmap to the RGB color map
+    heatmap = np.uint8(255 * heatmap)
+    heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+
+    # Superimpose the heatmap on the original image
+    superimposed_img = cv2.addWeighted(vgg19GradCam_img_original, 0.6, heatmap, 0.4, 0)
+
+    # Save the modified image to the specified location
+    save_folder = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/public/ASD_Prediction/GradCAM/GradCAM_VGG19'
+
+    unique_filename = str(uuid4()) + '.jpg'
+    output_image_path = os.path.join(save_folder, unique_filename)
+
+    cv2.imwrite(output_image_path, superimposed_img)
+    print(f"Grad-CAM output saved at: {output_image_path}")
+
+    # output_image = Image.fromarray(superimposed_img)
+    # output_image.save(output_image_path)
+
+    returnOutput = './ASD_Prediction/GradCAM/GradCAM_VGG19/' + unique_filename
+
+    return returnOutput
 
 
 def request_Lime_vgg19(image_path):
@@ -258,10 +312,16 @@ def request_Lime_vgg19(image_path):
 
 resNet50Model_predict = None
 img_scaled_ResNet50 = None
+resNet50GradCam_img_original = None
+resNet50GradCam_img_for_model = None
+resNet50GradCam_model = None
 target_size_ResNet50 = (244, 244)
 def predict_asd_ResNet50(image_path):
     global resNet50Model_predict
     global img_scaled_ResNet50
+    global resNet50GradCam_img_original
+    global resNet50GradCam_img_for_model
+    global resNet50GradCam_model
 
     model_path = '/Users/isurudissanayake/Documents/Data/DATA_SET/Feature-Extraction/ResNet50/ResNet50Model.h5'
     target_size = (224, 224)
@@ -275,9 +335,13 @@ def predict_asd_ResNet50(image_path):
     prediction = Dense(1, activation='sigmoid')(x)
 
     model = Model(inputs=base_model.input, outputs=prediction)
+    resNet50GradCam_model = model
 
     img = cv2.imread(image_path)
+    resNet50GradCam_img_original = img.copy()
     img = cv2.resize(img, target_size)
+    resNet50GradCam_img_for_model = preprocess_input(np.expand_dims(image.img_to_array(img), axis=0))
+
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = np.expand_dims(img, axis=0)
     img = preprocess_input(img)
@@ -299,6 +363,41 @@ def predict_asd_ResNet50(image_path):
         print(f"Predicted non-ASD with probability: {1 - rounded_prediction:.2f}")
         return rounded_prediction
 
+
+def request_GradCam_ResNet50():
+    print("request_GradCam_ResNet50")
+    global resNet50GradCam_img_original
+    global resNet50GradCam_img_for_model
+    global resNet50GradCam_model
+
+    # Generate class activation heatmap
+    heatmap = generate_grad_cam(resNet50GradCam_model, resNet50GradCam_img_for_model, 'conv5_block3_out')
+
+    # Resize the heatmap to match the original image
+    heatmap = cv2.resize(heatmap, (resNet50GradCam_img_original.shape[1], resNet50GradCam_img_original.shape[0]))
+
+    # Convert the heatmap to the RGB color map
+    heatmap = np.uint8(255 * heatmap)
+    heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+
+    # Superimpose the heatmap on the original image
+    superimposed_img = cv2.addWeighted(resNet50GradCam_img_original, 0.6, heatmap, 0.4, 0)
+
+    # Save the modified image to the specified location
+    save_folder = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/public/ASD_Prediction/GradCAM/GradCAM_ResNet50'
+
+    unique_filename = str(uuid4()) + '.jpg'
+    output_image_path = os.path.join(save_folder, unique_filename)
+
+    cv2.imwrite(output_image_path, superimposed_img)
+    print(f"Grad-CAM output saved at: {output_image_path}")
+
+    # output_image = Image.fromarray(superimposed_img)
+    # output_image.save(output_image_path)
+
+    returnOutput = './ASD_Prediction/GradCAM/GradCAM_ResNet50/' + unique_filename
+
+    return returnOutput
 
 def request_Lime_ResNet50(image_path):
     global resNet50Model_predict
@@ -343,10 +442,16 @@ def request_Lime_ResNet50(image_path):
 
 resNet50V2Model_predict = None
 img_scaled_ResNet50V2 = None
+resNet50V2GradCam_img_original = None
+resNet50V2GradCam_img_for_model = None
+resNet50V2GradCam_model = None
 target_size_ResNet50V2 = (244, 244)
 def predict_asd_ResNet50V2(image_path):
     global resNet50V2Model_predict
     global img_scaled_ResNet50V2
+    global resNet50V2GradCam_img_original
+    global resNet50V2GradCam_img_for_model
+    global resNet50V2GradCam_model
     model_path = '/Users/isurudissanayake/Documents/Data/DATA_SET/Feature-Extraction/ResNet50V2/ResNet50V2Model.h5'
     target_size = (224, 224)
 
@@ -360,9 +465,14 @@ def predict_asd_ResNet50V2(image_path):
     prediction = Dense(1, activation='sigmoid')(x)
 
     model = Model(inputs=base_model.input, outputs=prediction)
+    resNet50V2GradCam_model = model
 
     img = cv2.imread(image_path)
+    resNet50V2GradCam_img_original = img.copy()
+
     img = cv2.resize(img, target_size)
+    resNet50V2GradCam_img_for_model = preprocess_input(np.expand_dims(image.img_to_array(img), axis=0))
+
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = np.expand_dims(img, axis=0)
     img = preprocess_input(img)
@@ -383,6 +493,42 @@ def predict_asd_ResNet50V2(image_path):
     else:
         print(f"Predicted non-ASD with probability: {1 - rounded_prediction:.2f}")
         return rounded_prediction
+
+
+def request_GradCam_ResNet50V2():
+    print("request_GradCam_ResNet50V2")
+    global resNet50V2GradCam_img_original
+    global resNet50V2GradCam_img_for_model
+    global resNet50V2GradCam_model
+
+    # Generate class activation heatmap
+    heatmap = generate_grad_cam(resNet50V2GradCam_model, resNet50V2GradCam_img_for_model, 'conv5_block3_out')
+
+    # Resize the heatmap to match the original image
+    heatmap = cv2.resize(heatmap, (resNet50V2GradCam_img_original.shape[1], resNet50V2GradCam_img_original.shape[0]))
+
+    # Convert the heatmap to the RGB color map
+    heatmap = np.uint8(255 * heatmap)
+    heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+
+    # Superimpose the heatmap on the original image
+    superimposed_img = cv2.addWeighted(resNet50V2GradCam_img_original, 0.6, heatmap, 0.4, 0)
+
+    # Save the modified image to the specified location
+    save_folder = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/public/ASD_Prediction/GradCAM/GradCAM_ResNet50V2'
+
+    unique_filename = str(uuid4()) + '.jpg'
+    output_image_path = os.path.join(save_folder, unique_filename)
+
+    cv2.imwrite(output_image_path, superimposed_img)
+    print(f"Grad-CAM output saved at: {output_image_path}")
+
+    # output_image = Image.fromarray(superimposed_img)
+    # output_image.save(output_image_path)
+
+    returnOutput = './ASD_Prediction/GradCAM/GradCAM_ResNet50V2/' + unique_filename
+
+    return returnOutput
 
 
 def request_Lime_ResNet50V2(image_path):
@@ -428,10 +574,16 @@ def request_Lime_ResNet50V2(image_path):
 
 InceptionV3Model_predict = None
 img_scaled_InceptionV3 = None
+inceptionV3GradCam_img_original = None
+inceptionV3GradCam_img_for_model = None
+inceptionV3GradCam_model = None
 target_size_InceptionV3 = (299, 299)
 def predict_asd_InceptionV3(image_path):
     global InceptionV3Model_predict
     global img_scaled_InceptionV3
+    global inceptionV3GradCam_img_original
+    global inceptionV3GradCam_img_for_model
+    global inceptionV3GradCam_model
     model_path = '/Users/isurudissanayake/Documents/Data/DATA_SET/Feature-Extraction/InceptionV3/InceptionV3Model.h5'
     target_size = (299, 299)
 
@@ -446,9 +598,13 @@ def predict_asd_InceptionV3(image_path):
     prediction = Dense(1, activation='sigmoid')(x)
 
     model = Model(inputs=base_model.input, outputs=prediction)
+    inceptionV3GradCam_model = model
 
     img = cv2.imread(image_path)
+    inceptionV3GradCam_img_original = img.copy()
     img = cv2.resize(img, target_size)
+    inceptionV3GradCam_img_for_model = preprocess_input(np.expand_dims(image.img_to_array(img), axis=0))
+
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = np.expand_dims(img, axis=0)
     img = preprocess_input(img)
@@ -470,6 +626,41 @@ def predict_asd_InceptionV3(image_path):
         print(f"Predicted non-ASD with probability: {1 - rounded_prediction:.2f}")
         return rounded_prediction
 
+
+def request_GradCam_InceptionV3():
+    print("request_GradCam_InceptionV3")
+    global inceptionV3GradCam_img_original
+    global inceptionV3GradCam_img_for_model
+    global inceptionV3GradCam_model
+
+    # Generate class activation heatmap
+    heatmap = generate_grad_cam(inceptionV3GradCam_model, inceptionV3GradCam_img_for_model, 'mixed10')
+
+    # Resize the heatmap to match the original image
+    heatmap = cv2.resize(heatmap, (inceptionV3GradCam_img_original.shape[1], inceptionV3GradCam_img_original.shape[0]))
+
+    # Convert the heatmap to the RGB color map
+    heatmap = np.uint8(255 * heatmap)
+    heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+
+    # Superimpose the heatmap on the original image
+    superimposed_img = cv2.addWeighted(inceptionV3GradCam_img_original, 0.6, heatmap, 0.4, 0)
+
+    # Save the modified image to the specified location
+    save_folder = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/public/ASD_Prediction/GradCAM/GradCAM_InceptionV3'
+
+    unique_filename = str(uuid4()) + '.jpg'
+    output_image_path = os.path.join(save_folder, unique_filename)
+
+    cv2.imwrite(output_image_path, superimposed_img)
+    print(f"Grad-CAM output saved at: {output_image_path}")
+
+    # output_image = Image.fromarray(superimposed_img)
+    # output_image.save(output_image_path)
+
+    returnOutput = './ASD_Prediction/GradCAM/GradCAM_InceptionV3/' + unique_filename
+
+    return returnOutput
 
 def request_Lime_InceptionV3(image_path):
     global InceptionV3Model_predict
