@@ -1,50 +1,23 @@
 from uuid import uuid4
 import os
 import tensorflow as tf
-import numpy as np
-import cv2
 from keras.applications.vgg16 import preprocess_input
 from tensorflow.keras.applications.vgg16 import VGG16
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import GlobalAveragePooling2D, Dense
-from PIL import Image
-
 from keras.applications.vgg19 import preprocess_input
 from tensorflow.keras.applications.vgg19 import VGG19
-from tensorflow.keras.preprocessing import image
-from PIL import Image
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import GlobalAveragePooling2D, Dense
-import cv2
-import time
-import numpy as np
-import time
-from lime.lime_image import LimeImageExplainer
-
-import cv2
-import numpy as np
 from tensorflow.keras.applications import ResNet50
-from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.resnet50 import preprocess_input
-from tensorflow.keras.models import Model, load_model
-
-import cv2
-import numpy as np
 from tensorflow.keras.applications import ResNet50V2
-from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.resnet_v2 import preprocess_input
 from tensorflow.keras.models import Model, load_model
 from lime.lime_image import LimeImageExplainer
 from PIL import Image
 from tensorflow.keras.layers import GlobalAveragePooling2D, Reshape, Dense
-
 import cv2
 import numpy as np
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.inception_v3 import InceptionV3, preprocess_input
-from tensorflow.keras.models import load_model
 
-folder_path = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/src/CaptureImages'
 
 vgg16Model_predict = None
 img_scaled_vgg16 = None

@@ -3,19 +3,8 @@ import base64
 from fastapi import FastAPI, File, UploadFile, HTTPException
 import os
 from fastapi.middleware.cors import CORSMiddleware
-from pathlib import Path
-from uuid import uuid4
-from ASD_Prediction import predict_asd_vgg16
-from ASD_Prediction import predict_asd_vgg19
-from ASD_Prediction import predict_asd_ResNet50
-from ASD_Prediction import predict_asd_ResNet50V2
-from ASD_Prediction import predict_asd_InceptionV3
-from ASD_Prediction import request_Lime_vgg16
-from ASD_Prediction import request_Lime_vgg19
-from ASD_Prediction import request_Lime_ResNet50
-from ASD_Prediction import request_Lime_ResNet50V2
-from ASD_Prediction import request_Lime_InceptionV3
 from ASD_Prediction import *
+from Emotoin_Prediction import *
 
 from fastapi.responses import JSONResponse
 from typing import Optional
@@ -30,11 +19,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-image_path = "aaaa"
+folder_path = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/src/CaptureImages'
+
 
 @app.get("/predictASD")
 async def predict_asd(filepath: str, selected_model: Optional[str] = None):
-
     global image_path
 
     try:
@@ -55,21 +44,49 @@ async def predict_asd(filepath: str, selected_model: Optional[str] = None):
         elif selected_model == "InceptionV3":
             result = predict_asd_InceptionV3(input_file_path)
 
-
         print(f"Result: {result}")
         rounded_result = round(result, 2)
         if rounded_result > 0.5:
-            return JSONResponse(content={"message": "Prediction successful", "prediction": float(rounded_result), "isASD": True})
+            return JSONResponse(
+                content={"message": "Prediction successful", "prediction": float(rounded_result), "isASD": True})
         else:
-            return JSONResponse(content={"message": "Prediction successful", "prediction": float(1-rounded_result), "isASD": False})
+            return JSONResponse(
+                content={"message": "Prediction successful", "prediction": float(1 - rounded_result), "isASD": False})
         # return JSONResponse(content={"message": "Prediction successful", "prediction": float(round(rounded_result, 2))})
+    except Exception as e:
+        return JSONResponse(content={"error": f"Failed to predict ASD: {str(e)}"})
+
+
+@app.get("/predictEmotoin")
+async def predict_Emotoin(filepath: str, selected_model: Optional[str] = None):
+    try:
+        print(f"Filepath: {filepath}")
+        print(f"Selected Model: {selected_model}")
+
+        input_file_path = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/src/CaptureImages/' + filepath
+        image_path = input_file_path
+
+        if selected_model == "VGG16":
+            emotion, probability = predict_emotion_vgg16(input_file_path)
+        elif selected_model == "VGG19":
+            emotion, probability = predict_emotion_vgg19(input_file_path)
+        elif selected_model == "ResNet50":
+            emotion, probability = predict_emotion_resNet50(input_file_path)
+        elif selected_model == "ResNet50V2":
+            emotion, probability = predict_emotion_resNet50V2(input_file_path)
+        elif selected_model == "InceptionV3":
+            emotion, probability = predict_emotion_inceptionV3(input_file_path)
+
+        print(f"emotion: {emotion}")
+        print(f"probability: {probability}")
+
+        return JSONResponse(content={"message": "Emotion prediction successful", "emotion": emotion, "probability": float(probability)})
     except Exception as e:
         return JSONResponse(content={"error": f"Failed to predict ASD: {str(e)}"})
 
 
 @app.get("/xai-lime")
 async def explain_lime(filepath: str, selected_model: Optional[str] = None):
-
     try:
         print(f"Filepath: {filepath}")
         print(f"Selected Model: {selected_model}")
@@ -94,14 +111,14 @@ async def explain_lime(filepath: str, selected_model: Optional[str] = None):
             xai_lime_path = request_Lime_InceptionV3(image_path)
 
         print(f"XAI LIME Path: {xai_lime_path}")
-        return JSONResponse(content={"message": "LIME explanation successful", "xai_lime_path": xai_lime_path})
+        return JSONResponse(content={"message": "LIME explanation successful", "xai_lime_path": xai_lime_path,
+                                     "image_path": image_path})
     except Exception as e:
         return JSONResponse(content={"error": f"Failed to explain LIME: {str(e)}"})
 
 
 @app.get("/xai-gradcam")
 async def explain_lime(filepath: str, selected_model: Optional[str] = None):
-
     try:
         print(f"Filepath: {filepath}")
         print(f"Selected Model: {selected_model}")
@@ -126,7 +143,8 @@ async def explain_lime(filepath: str, selected_model: Optional[str] = None):
             xai_gradCam_path = request_GradCam_InceptionV3()
 
         print(f"XAI GradCam Path: {xai_gradCam_path}")
-        return JSONResponse(content={"message": "GradCAM explanation successful", "xai_gradCAM_path": xai_gradCam_path})
+        return JSONResponse(content={"message": "GradCAM explanation successful", "xai_gradCAM_path": xai_gradCam_path,
+                                     "image_path": image_path})
     except Exception as e:
         return JSONResponse(content={"error": f"Failed to explain GradCAM: {str(e)}"})
 
@@ -149,6 +167,7 @@ async def save_image(image: UploadFile = File(...)):
         image_file.write(content)
     print(f"Filename: {unique_filename}");
     return {"message": "Image saved successfully", "filename": unique_filename}
+
 
 @app.post("/upload_image")
 async def upload_image(image: UploadFile = File(...)):
@@ -173,5 +192,3 @@ async def upload_image(image: UploadFile = File(...)):
 
     except Exception as e:
         return {"error": f"Failed to upload image: {str(e)}"}
-
-
