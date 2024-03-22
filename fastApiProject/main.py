@@ -85,6 +85,70 @@ async def predict_Emotoin(filepath: str, selected_model: Optional[str] = None):
         return JSONResponse(content={"error": f"Failed to predict ASD: {str(e)}"})
 
 
+@app.get("/emotion-xai-lime")
+async def emotion_explain_lime(filepath: str, selected_model: Optional[str] = None):
+    try:
+        print(f"Filepath: {filepath}")
+        print(f"Selected Model: {selected_model}")
+        input_file_path = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/src/CaptureImages/' + filepath
+        image_path = input_file_path
+        print(f"Image Path: {image_path}")
+
+        if selected_model == "VGG16":
+            print("VGG16")
+            xai_lime_path = request_lime_emotion_vgg16(image_path)
+        elif selected_model == "VGG19":
+            print("VGG19")
+            xai_lime_path = request_lime_emotion_vgg19(image_path)
+        elif selected_model == "ResNet50":
+            print("ResNet50")
+            xai_lime_path = request_lime_emotion_resNet50(image_path)
+        elif selected_model == "ResNet50V2":
+            print("ResNet50V2")
+            xai_lime_path = request_lime_emotion_resNet50V2(image_path)
+        elif selected_model == "InceptionV3":
+            print("InceptionV3")
+            xai_lime_path = request_lime_emotion_inceptionV3(image_path)
+
+        print(f"XAI LIME Path: {xai_lime_path}")
+        return JSONResponse(content={"message": "LIME explanation successful", "xai_lime_path": xai_lime_path,
+                                     "image_path": image_path})
+    except Exception as e:
+        return JSONResponse(content={"error": f"Failed to explain LIME: {str(e)}"})
+
+
+@app.get("/emotion-xai-gradcam")
+async def explain_lime(filepath: str, selected_model: Optional[str] = None):
+    try:
+        print(f"Filepath: {filepath}")
+        print(f"Selected Model: {selected_model}")
+        input_file_path = '/Users/isurudissanayake/DataspellProjects/FYP_Implementation/aunite/src/CaptureImages/' + filepath
+        image_path = input_file_path
+        print(f"Image Path: {image_path}")
+
+        if selected_model == "VGG16":
+            print("VGG16")
+            xai_gradCam_path = request_emotion_gradcam_vgg16()
+        elif selected_model == "VGG19":
+            print("VGG19")
+            xai_gradCam_path = request_gradcam_emotion_vgg19()
+        elif selected_model == "ResNet50":
+            print("ResNet50")
+            xai_gradCam_path = request_gradcam_emotion_resNet50()
+        elif selected_model == "ResNet50V2":
+            print("ResNet50V2")
+            xai_gradCam_path = request_gradcam_emotion_resNet50V2()
+        elif selected_model == "InceptionV3":
+            print("InceptionV3")
+            xai_gradCam_path = request_gradcam_emotion_inceptionV3()
+
+        print(f"XAI GradCam Path: {xai_gradCam_path}")
+        return JSONResponse(content={"message": "GradCAM explanation successful", "xai_gradCAM_path": xai_gradCam_path,
+                                     "image_path": image_path})
+    except Exception as e:
+        return JSONResponse(content={"error": f"Failed to explain GradCAM: {str(e)}"})
+
+
 @app.get("/xai-lime")
 async def explain_lime(filepath: str, selected_model: Optional[str] = None):
     try:
