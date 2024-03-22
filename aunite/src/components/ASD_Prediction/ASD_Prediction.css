@@ -43,6 +43,7 @@
 .btn-emotion {
     width: 50%;
     margin-top: 10px;
+    margin-left: 100px;
     padding: 13px;
     cursor: pointer;
     font-weight: 900;

@@ -188,12 +188,10 @@ const HomePage = () => {
     return (
         <div>
             <nav className="navbar">
-                <div className="container">
-                    <a className="navbar-brand">Aunite</a>
-                    <form className="d-flex" role="search">
-                        <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                        <button className="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+                <div className="container d-flex justify-content-center" style={{ gap: "30px" }}>
+                    <Link className="navbar-brand" to="/" style={{ fontSize: "30px", fontWeight: "bold " }}>Aunite</Link>
+                    <Link className='nav-link' style={{ fontSize: "20px" }} to="/">Home</Link>
+                    <Link className='nav-link' style={{ fontSize: "20px" }} to="/guide">Guide</Link>
                 </div>
             </nav>
             <div className="container">

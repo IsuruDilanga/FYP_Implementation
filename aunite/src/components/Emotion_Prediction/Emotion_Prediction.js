@@ -58,7 +58,7 @@ const Emotion_Prediction = () => {
     const gradCamCheck = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8000/xai-gradcam?filepath=${imagePath}&selected_model=${model}`);
+            const response = await fetch(`http://localhost:8000/emotion-xai-gradcam?filepath=${imagePath}&selected_model=${model}`);
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
@@ -81,12 +81,10 @@ const Emotion_Prediction = () => {
     return (
         <div>
             <nav className="navbar">
-                <div className="container">
-                    <a className="navbar-brand">Aunite</a>
-                    <form className="d-flex" role="search">
-                        <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                        <button className="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+                <div className="container d-flex justify-content-center" style={{ gap: "30px" }}>
+                    <Link className="navbar-brand" to="/" style={{ fontSize: "30px", fontWeight: "bold " }}>Aunite</Link>
+                    <Link className='nav-link' style={{ fontSize: "20px" }} to="/">Home</Link>
+                    <Link className='nav-link' style={{ fontSize: "20px" }} to="/guide">Guide</Link>
                 </div>
             </nav>
             <div className="container">
