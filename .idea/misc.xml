@@ -3,8 +3,11 @@
   <component name="Black">
     <option name="sdkName" value="FYP_implementation" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="FYP_implementation" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="$USER_HOME$/Desktop/Tensorflow/env" project-jdk-type="Python SDK" />
   <component name="PyCharmDSProjectLayout">
     <option name="id" value="JupyterRightHiddenStructureLayout" />
+  </component>
+  <component name="PyPackaging">
+    <option name="earlyReleasesAsUpgrades" value="true" />
   </component>
 </project>
